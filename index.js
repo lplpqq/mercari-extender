@@ -58,10 +58,18 @@ function formatDate (date) {
     loadScript('https://cdnjs.cloudflare.com/ajax/libs/jose/5.6.3/index.umd.min.js').then(async () => {
         const currentUrl = location.href
 
-        if (!currentUrl.includes("https://jp.mercari.com")) {
+        const supportedLocales = ["en", "ko", "zh-TW"];
+        const itemRegex = new RegExp(
+            `https:\/\/jp\.mercari\.com\/(${supportedLocales.join("|")}/)?item\/`,
+            // Url locale is optional.
+            // No locale in between jp.mercari.com and /item part means that default (japanese) locale will be applied
+            'g'
+        );
+
+        if (!currentUrl.startsWith("https://jp.mercari.com")) {
             alert("This bookmarklet is designed to be used with jp.mercari.com");
             return
-        } else if (!currentUrl.startsWith('https://jp.mercari.com/item/')) {
+        } else if (!itemRegex.test(currentUrl)) {
             alert("Please proceed to the page with the item you would like to receive information about");
             return
         }
